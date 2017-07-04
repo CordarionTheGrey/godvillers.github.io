@@ -1,0 +1,6 @@
+doctype html
+html
+  head
+    title Dungeon Map Editor
+  body
+    h1 Dungeon Map Editor
