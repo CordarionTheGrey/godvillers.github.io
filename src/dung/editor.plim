@@ -1,6 +1,9 @@
 doctype html
 html
   head
-    title Dungeon Map Editor
+    meta(charset="UTF-8")
+    title Редактор карт подземелий
+    link(rel="stylesheet" type="text/css" href="/dung/editor.css")
+    script(type="text/javascript" src="/dung/editor.js")
   body
-    h1 Dungeon Map Editor
+    script(type="text/javascript") Elm.Editor.fullscreen();
