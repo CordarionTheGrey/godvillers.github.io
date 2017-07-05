@@ -7795,9 +7795,34 @@ var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
 
-var _Godvillers$godvillers_github_io$Editor_Model$model = {i: 0};
-var _Godvillers$godvillers_github_io$Editor_Model$Model = function (a) {
-	return {i: a};
+var _Godvillers$godvillers_github_io$Editor_Model$Model = F3(
+	function (a, b, c) {
+		return {initial: a, field: b, brush: c};
+	});
+var _Godvillers$godvillers_github_io$Editor_Model$Three = {ctor: 'Three'};
+var _Godvillers$godvillers_github_io$Editor_Model$Two = {ctor: 'Two'};
+var _Godvillers$godvillers_github_io$Editor_Model$One = {ctor: 'One'};
+var _Godvillers$godvillers_github_io$Editor_Model$Boss = function (a) {
+	return {ctor: 'Boss', _0: a};
+};
+var _Godvillers$godvillers_github_io$Editor_Model$Portal = function (a) {
+	return {ctor: 'Portal', _0: a};
+};
+var _Godvillers$godvillers_github_io$Editor_Model$Warning = {ctor: 'Warning'};
+var _Godvillers$godvillers_github_io$Editor_Model$Mark = {ctor: 'Mark'};
+var _Godvillers$godvillers_github_io$Editor_Model$Trap = {ctor: 'Trap'};
+var _Godvillers$godvillers_github_io$Editor_Model$Treasure = {ctor: 'Treasure'};
+var _Godvillers$godvillers_github_io$Editor_Model$Entry = {ctor: 'Entry'};
+var _Godvillers$godvillers_github_io$Editor_Model$Wall = {ctor: 'Wall'};
+var _Godvillers$godvillers_github_io$Editor_Model$Empty = {ctor: 'Empty'};
+var _Godvillers$godvillers_github_io$Editor_Model$Unknown = {ctor: 'Unknown'};
+var _Godvillers$godvillers_github_io$Editor_Model$model = {
+	initial: true,
+	field: A2(
+		_elm_lang$core$List$repeat,
+		16,
+		A2(_elm_lang$core$List$repeat, 16, _Godvillers$godvillers_github_io$Editor_Model$Unknown)),
+	brush: _elm_lang$core$Maybe$Nothing
 };
 
 var _elm_lang$html$Html_Attributes$map = _elm_lang$virtual_dom$VirtualDom$mapProperty;
@@ -8265,28 +8290,368 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _Godvillers$godvillers_github_io$Editor_Controller$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'NoOp') {
-			return model;
+var _Godvillers$godvillers_github_io$Editor_Controller$modify = F3(
+	function (i, f, ls) {
+		var _p0 = ls;
+		if (_p0.ctor === '[]') {
+			return ls;
 		} else {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{i: model.i + 1});
+			var _p2 = _p0._1;
+			var _p1 = _p0._0;
+			return _elm_lang$core$Native_Utils.eq(i, 0) ? {
+				ctor: '::',
+				_0: f(_p1),
+				_1: _p2
+			} : {
+				ctor: '::',
+				_0: _p1,
+				_1: A3(_Godvillers$godvillers_github_io$Editor_Controller$modify, i - 1, f, _p2)
+			};
 		}
 	});
-var _Godvillers$godvillers_github_io$Editor_Controller$Inc = {ctor: 'Inc'};
-var _Godvillers$godvillers_github_io$Editor_Controller$NoOp = {ctor: 'NoOp'};
+var _Godvillers$godvillers_github_io$Editor_Controller$update = F2(
+	function (msg, model) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'ParseMap':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{initial: false});
+			case 'ChangeBrush':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{brush: _p3._0});
+			case 'ChangeCell':
+				var _p4 = model.brush;
+				if (_p4.ctor === 'Nothing') {
+					return model;
+				} else {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							initial: false,
+							field: A3(
+								_Godvillers$godvillers_github_io$Editor_Controller$modify,
+								_p3._0,
+								A2(
+									_Godvillers$godvillers_github_io$Editor_Controller$modify,
+									_p3._1,
+									_elm_lang$core$Basics$always(_p4._0)),
+								model.field)
+						});
+				}
+			case 'ScrollUp':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						field: A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(_elm_lang$core$List$drop, 1, model.field),
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$core$List$repeat, 16, _Godvillers$godvillers_github_io$Editor_Model$Unknown),
+								_1: {ctor: '[]'}
+							})
+					});
+			case 'ScrollDown':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						field: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$List$repeat, 16, _Godvillers$godvillers_github_io$Editor_Model$Unknown),
+							_1: A2(_elm_lang$core$List$take, 15, model.field)
+						}
+					});
+			case 'ScrollLeft':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						field: A2(
+							_elm_lang$core$List$map,
+							function (row) {
+								return A2(
+									_elm_lang$core$Basics_ops['++'],
+									A2(_elm_lang$core$List$drop, 1, row),
+									{
+										ctor: '::',
+										_0: _Godvillers$godvillers_github_io$Editor_Model$Unknown,
+										_1: {ctor: '[]'}
+									});
+							},
+							model.field)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						field: A2(
+							_elm_lang$core$List$map,
+							function (_p5) {
+								return A2(
+									F2(
+										function (x, y) {
+											return {ctor: '::', _0: x, _1: y};
+										}),
+									_Godvillers$godvillers_github_io$Editor_Model$Unknown,
+									A2(_elm_lang$core$List$take, 15, _p5));
+							},
+							model.field)
+					});
+		}
+	});
+var _Godvillers$godvillers_github_io$Editor_Controller$ScrollRight = {ctor: 'ScrollRight'};
+var _Godvillers$godvillers_github_io$Editor_Controller$ScrollLeft = {ctor: 'ScrollLeft'};
+var _Godvillers$godvillers_github_io$Editor_Controller$ScrollDown = {ctor: 'ScrollDown'};
+var _Godvillers$godvillers_github_io$Editor_Controller$ScrollUp = {ctor: 'ScrollUp'};
+var _Godvillers$godvillers_github_io$Editor_Controller$ChangeCell = F2(
+	function (a, b) {
+		return {ctor: 'ChangeCell', _0: a, _1: b};
+	});
+var _Godvillers$godvillers_github_io$Editor_Controller$ChangeBrush = function (a) {
+	return {ctor: 'ChangeBrush', _0: a};
+};
+var _Godvillers$godvillers_github_io$Editor_Controller$ParseMap = {ctor: 'ParseMap'};
 
+var _Godvillers$godvillers_github_io$Editor_View$genNavigation = F2(
+	function (attrs, contents) {
+		var arrow = F2(
+			function (t, msg) {
+				return A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(msg),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('palette'),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(t),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					});
+			});
+		var empty = A2(
+			_elm_lang$html$Html$td,
+			{ctor: '[]'},
+			{ctor: '[]'});
+		return A2(
+			_elm_lang$html$Html$table,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$tr,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: empty,
+						_1: {
+							ctor: '::',
+							_0: A2(arrow, '↑', _Godvillers$godvillers_github_io$Editor_Controller$ScrollUp),
+							_1: {
+								ctor: '::',
+								_0: empty,
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$tr,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(arrow, '←', _Godvillers$godvillers_github_io$Editor_Controller$ScrollLeft),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html$td, attrs, contents),
+								_1: {
+									ctor: '::',
+									_0: A2(arrow, '→', _Godvillers$godvillers_github_io$Editor_Controller$ScrollRight),
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$tr,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: empty,
+								_1: {
+									ctor: '::',
+									_0: A2(arrow, '↓', _Godvillers$godvillers_github_io$Editor_Controller$ScrollDown),
+									_1: {
+										ctor: '::',
+										_0: empty,
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _Godvillers$godvillers_github_io$Editor_View$u = function (_p0) {
+	return _elm_lang$core$String$fromChar(
+		_elm_lang$core$Char$fromCode(_p0));
+};
+var _Godvillers$godvillers_github_io$Editor_View$showCell = function (cell) {
+	var _p1 = cell;
+	switch (_p1.ctor) {
+		case 'Unknown':
+			return '?';
+		case 'Empty':
+			return _Godvillers$godvillers_github_io$Editor_View$u(160);
+		case 'Wall':
+			return '#';
+		case 'Entry':
+			return '🚪';
+		case 'Treasure':
+			return '@';
+		case 'Trap':
+			return '🕳';
+		case 'Mark':
+			return '!';
+		case 'Warning':
+			return '⚠';
+		case 'Portal':
+			return _p1._0.once ? '~1' : '~';
+		default:
+			var s = function () {
+				var _p2 = _p1._0.strength;
+				if (_p2.ctor === 'Nothing') {
+					return '?';
+				} else {
+					switch (_p2._0.ctor) {
+						case 'One':
+							return '1';
+						case 'Two':
+							return '2';
+						default:
+							return '3';
+					}
+				}
+			}();
+			var a = _p1._0.alive ? '⚠' : A2(
+				_elm_lang$core$Basics_ops['++'],
+				'💀',
+				_Godvillers$godvillers_github_io$Editor_View$u(8288));
+			return A2(_elm_lang$core$Basics_ops['++'], a, s);
+	}
+};
+var _Godvillers$godvillers_github_io$Editor_View$genPalette = F2(
+	function (activeBrush, attrs) {
+		var f = function (cell) {
+			var thisIsActive = _elm_lang$core$Native_Utils.eq(
+				_elm_lang$core$Maybe$Just(cell),
+				activeBrush);
+			var styling = _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'pushed', _1: thisIsActive},
+					_1: {ctor: '[]'}
+				});
+			var newBrush = thisIsActive ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(cell);
+			return A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						_Godvillers$godvillers_github_io$Editor_Controller$ChangeBrush(newBrush)),
+					_1: {ctor: '::', _0: styling, _1: attrs}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_Godvillers$godvillers_github_io$Editor_View$showCell(cell)),
+					_1: {ctor: '[]'}
+				});
+		};
+		return _elm_lang$core$List$map(f);
+	});
+var _Godvillers$godvillers_github_io$Editor_View$genCell = F2(
+	function (attrs, cell) {
+		var classes = _elm_lang$html$Html_Attributes$classList(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'dmc', _1: true},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'dmw',
+						_1: _elm_lang$core$Native_Utils.eq(cell, _Godvillers$godvillers_github_io$Editor_Model$Wall)
+					},
+					_1: {ctor: '[]'}
+				}
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '::', _0: classes, _1: attrs},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_Godvillers$godvillers_github_io$Editor_View$showCell(cell)),
+				_1: {ctor: '[]'}
+			});
+	});
+var _Godvillers$godvillers_github_io$Editor_View$genRow = function (i) {
+	var genCell2 = function (j) {
+		return _Godvillers$godvillers_github_io$Editor_View$genCell(
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					A2(_Godvillers$godvillers_github_io$Editor_Controller$ChangeCell, i, j)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'left',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(j * 21),
+									'px')
+							},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	};
+	return function (_p3) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('dml'),
+				_1: {ctor: '[]'}
+			},
+			A2(_elm_lang$core$List$indexedMap, genCell2, _p3));
+	};
+};
 var _Godvillers$godvillers_github_io$Editor_View$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('body'),
-			_1: {ctor: '[]'}
-		},
+		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
@@ -8294,18 +8659,7 @@ var _Godvillers$godvillers_github_io$Editor_View$view = function (model) {
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_Godvillers$godvillers_github_io$Editor_Controller$Inc),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Inc'),
-							_1: {ctor: '[]'}
-						}),
+					_0: _elm_lang$html$Html$text('Вставьте сюда код страницы хроники (не адрес):'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -8315,11 +8669,194 @@ var _Godvillers$godvillers_github_io$Editor_View$view = function (model) {
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(model.i)),
+						_0: A2(
+							_elm_lang$html$Html$textarea,
+							{ctor: '[]'},
+							{ctor: '[]'}),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_Godvillers$godvillers_github_io$Editor_Controller$ParseMap),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Сгенерировать'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								A3(
+									_Godvillers$godvillers_github_io$Editor_View$genPalette,
+									model.brush,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('palette'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _Godvillers$godvillers_github_io$Editor_Model$Unknown,
+										_1: {
+											ctor: '::',
+											_0: _Godvillers$godvillers_github_io$Editor_Model$Empty,
+											_1: {
+												ctor: '::',
+												_0: _Godvillers$godvillers_github_io$Editor_Model$Wall,
+												_1: {
+													ctor: '::',
+													_0: _Godvillers$godvillers_github_io$Editor_Model$Entry,
+													_1: {
+														ctor: '::',
+														_0: _Godvillers$godvillers_github_io$Editor_Model$Treasure,
+														_1: {
+															ctor: '::',
+															_0: _Godvillers$godvillers_github_io$Editor_Model$Trap,
+															_1: {
+																ctor: '::',
+																_0: _Godvillers$godvillers_github_io$Editor_Model$Mark,
+																_1: {
+																	ctor: '::',
+																	_0: _Godvillers$godvillers_github_io$Editor_Model$Warning,
+																	_1: {
+																		ctor: '::',
+																		_0: _Godvillers$godvillers_github_io$Editor_Model$Portal(
+																			{once: true}),
+																		_1: {
+																			ctor: '::',
+																			_0: _Godvillers$godvillers_github_io$Editor_Model$Portal(
+																				{once: false}),
+																			_1: {
+																				ctor: '::',
+																				_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																					{alive: true, strength: _elm_lang$core$Maybe$Nothing}),
+																				_1: {
+																					ctor: '::',
+																					_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																						{
+																							alive: true,
+																							strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$One)
+																						}),
+																					_1: {
+																						ctor: '::',
+																						_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																							{
+																								alive: true,
+																								strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$Two)
+																							}),
+																						_1: {
+																							ctor: '::',
+																							_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																								{
+																									alive: true,
+																									strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$Three)
+																								}),
+																							_1: {
+																								ctor: '::',
+																								_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																									{alive: false, strength: _elm_lang$core$Maybe$Nothing}),
+																								_1: {
+																									ctor: '::',
+																									_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																										{
+																											alive: false,
+																											strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$One)
+																										}),
+																									_1: {
+																										ctor: '::',
+																										_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																											{
+																												alive: false,
+																												strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$Two)
+																											}),
+																										_1: {
+																											ctor: '::',
+																											_0: _Godvillers$godvillers_github_io$Editor_Model$Boss(
+																												{
+																													alive: false,
+																													strength: _elm_lang$core$Maybe$Just(_Godvillers$godvillers_github_io$Editor_Model$Three)
+																												}),
+																											_1: {ctor: '[]'}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									})),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_Godvillers$godvillers_github_io$Editor_View$genNavigation,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('box'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('block_h'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Карта'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$div,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$class('new_line em_font'),
+													_1: {ctor: '[]'}
+												},
+												A2(_elm_lang$core$List$indexedMap, _Godvillers$godvillers_github_io$Editor_View$genRow, model.field)),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
 			}
 		});
 };
